@@ -1,3 +1,11 @@
+
+import os
+import streamlit as st
+
+# --- 強制安裝 Playwright 瀏覽器核心 ---
+# 這行會下載 Chromium 到伺服器的快取資料夾中
+if not os.path.exists("/home/appuser/.cache/ms-playwright"):
+    os.system("playwright install chromium")
 import streamlit as st
 import pytesseract
 from PIL import Image
