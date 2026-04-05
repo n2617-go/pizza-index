@@ -1,3 +1,15 @@
+import os
+
+# 強制安裝 Playwright 瀏覽器核心 (這行很重要)
+try:
+    import playwright
+except ImportError:
+    os.system("pip install playwright")
+
+# 檢查是否已經安裝過瀏覽器，如果沒有就執行安裝
+if not os.path.exists("/home/appuser/.cache/ms-playwright"):
+    os.system("playwright install chromium")
+
 import streamlit as st
 from playwright.sync_api import sync_playwright
 import plotly.graph_objects as go
