@@ -105,7 +105,7 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-if st.button("🛰️ 取得最新指數情報"):
+if st.button("🛰️ 點擊取得最新指數情報"):
     bar = st.progress(0)
     with st.spinner("指數獲取中..."):
         lvl, pct = get_intelligence_classic(bar)
