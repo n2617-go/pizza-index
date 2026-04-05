@@ -93,8 +93,8 @@ def get_intelligence_classic(progress_bar):
         return None, None
 
 # --- 4. 介面呈現 ---
-st.markdown("<h1>🛡️ Pentagon Intelligence</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#888;'>五角大廈披薩指數戰情室</p>", unsafe_allow_html=True)
+st.markdown("<h1>🛡️ Pentagon Pizza Index</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:#888;'>五角大廈披薩指數</p>", unsafe_allow_html=True)
 
 now_tw = datetime.now(tz_tw)
 now_us = datetime.now(tz_us)
@@ -105,9 +105,9 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-if st.button("🛰️ 啟動衛星掃描偵察"):
+if st.button("🛰️ 取得最新指數情報"):
     bar = st.progress(0)
-    with st.spinner("影像辨識中..."):
+    with st.spinner("指數獲取中..."):
         lvl, pct = get_intelligence_classic(bar)
         # 更新全域變數，確保不會變回 None
         if lvl is not None: st.session_state['cur_lvl'] = lvl
@@ -116,7 +116,7 @@ if st.button("🛰️ 啟動衛星掃描偵察"):
         if lvl is not None or pct is not None:
             st.toast("情報更新成功", icon="✅")
         else:
-            st.error("辨識失敗，請重試。")
+            st.error("情報取得失敗，請重試。")
         bar.empty()
 
 # 獲取數據，若無則顯示 1 與 0
@@ -138,13 +138,13 @@ st.markdown(f"""
 if defcon == 5:
     st.error("### 🟥 第 5 級：爆表 (最高警戒)\n美軍準備行動前夕，預測美軍發動突擊。")
 elif defcon == 4:
-    st.error("### 🟧 第 4 級：暴增 (重大事件)\n活動量飆升，預示重大軍事或外交事件。")
+    st.error("### 🟧 第 4 級：暴增 (重大事件)\n披薩店活動量飆升，預示重大軍事或外交事件。")
 elif defcon == 3:
-    st.warning("### 🟨 第 3 級：繁忙 (小型行動)\n活動量異常增長，小型行動或深夜會議。")
+    st.warning("### 🟨 第 3 級：繁忙 (小型行動)\n活動量異常增長，可能有小型行動或深夜會議。")
 elif defcon == 2:
-    st.success("### 🟩 第 2 級：微熱 (正常範圍)")
+    st.success("### 🟩 第 2 級：微熱 (正常範圍)\n目前尚穩，披薩店營運正常")
 else:
-    st.success("### 🟩 第 1 級：正常 (穩定狀態)")
+    st.success("### 🟩 第 1 級：正常 (穩定狀態)\n目前五角大廈無異常")
 
 st.divider()
-st.caption("數據來源：World Monitor 影像即時辨識分析")
+st.caption("情報來源：World Monitor")
