@@ -75,7 +75,7 @@ def get_full_intelligence():
 
 # --- 2. 介面呈現 ---
 st.title("🛡️ Pentagon Intelligence Dashboard")
-st.subheader("五角大廈披薩指數 | 全域影像偵察系統")
+st.subheader("五角大廈披薩指數戰情室")
 
 # 雙時區顯示
 t1, t2 = st.columns(2)
@@ -84,8 +84,8 @@ with t2: st.metric("🇺🇸 華盛頓時間", datetime.now(tz_us).strftime("%m/
 
 st.divider()
 
-if st.button("🛰️ 啟動全域衛星掃描"):
-    with st.spinner("情報解析中..."):
+if st.button("🛰️ 更新最新披薩指數情報"):
+    with st.spinner("指數等級分析中..."):
         status, val1, val2 = get_full_intelligence()
         if status == "SUCCESS":
             if val1 is not None: st.session_state['current_defcon'] = val1
@@ -113,10 +113,10 @@ with c2:
 if defcon == 5:
     st.error("### 🟥 第 5 級：爆表 (最高警戒)\n美軍可能準備行動前夕，預測美軍發動突擊或空襲。")
 elif defcon == 4:
-    st.error("### 🟧 第 4 級：暴增 (重大事件)\n活動量飆升，預示重大軍事或外交事件。")
+    st.error("### 🟧 第 4 級：暴增 (重大事件)\n披薩店訂單暴增，預警五角大廈有重大軍事或外交事件。")
 elif defcon == 3:
-    st.warning("### 🟨 第 3 級：繁忙 (小型行動)\n活動量異常增長，可能表明有小型行動或深夜會議。")
+    st.warning("### 🟨 第 3 級：繁忙 (小型行動)\n活動量異常增長，可能五角大廈有小型行動或深夜會議。")
 elif defcon == 2:
-    st.success("### 🟩 第 2 級：微熱 (正常範圍)\n目前數據尚穩。")
+    st.success("### 🟩 第 2 級：微熱 (正常範圍)\n目前尚穩，披薩店營運正常。")
 else: 
-    st.success("### 🟩 第 1 級：正常 (穩定狀態)\n目前無異常活動。")
+    st.success("### 🟩 第 1 級：正常 (穩定狀態)\n目前五角大廈無異常活動。")
