@@ -1,7 +1,5 @@
 streamlit
-pandas
 requests
-yfinance
-streamlit-cookies-manager
-requests-cache
-cryptography
+pandas
+plotly
+pytz
