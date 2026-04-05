@@ -109,7 +109,7 @@ def get_intelligence():
         return None, None
 
 # --- 4. 介面呈現 (行動端緊湊佈局) ---
-st.markdown("<h1>🍕 Pentagon Intel</h1>", unsafe_allow_html=True)
+st.markdown("<h1>🍕 Pentagon Pizza Index</h1>", unsafe_allow_html=True)
 st.markdown("<h3>五角大廈披薩指數戰情室</h3>", unsafe_allow_html=True)
 
 # --- A. 緊湊型時間顯示區 (並排) ---
@@ -132,12 +132,12 @@ st.markdown(f"""
 
 # 執行按鈕 (全寬)
 if st.button("🛰️ 更新即時情報數據"):
-    with st.spinner("掃描中..."):
+    with st.spinner("披薩指數情報掃描中..."):
         lvl, pct = get_intelligence()
         if lvl is not None:
             st.session_state['current_defcon'] = lvl
             st.session_state['current_percent'] = pct
-            st.toast("數據更新成功！", icon="✅")
+            st.toast("情報數據更新成功！", icon="✅")
         else:
             st.error("掃描失敗，連線異常。")
 
