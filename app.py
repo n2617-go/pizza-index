@@ -129,7 +129,7 @@ st.markdown(f"""
         <div style="display:flex; justify-content:space-around; align-items:center; text-align:center;">
             <div style="flex:1;"><p style="font-size:12px;color:#999;margin:0;">DEFCON</p><p class="db-value" style="font-size:60px;margin:0;">{defcon}</p></div>
             <div style="border-left:1px solid #333; height:40px;"></div>
-            <div style="flex:1;"><p style="font-size:12px;color:#999;margin:0;">PRESSURE</p><p class="db-value" style="font-size:60px;margin:0;">{int(percent)}%</p></div>
+            <div style="flex:1;"><p style="font-size:12px;color:#999;margin:0;">Index</p><p class="db-value" style="font-size:60px;margin:0;">{int(percent)}%</p></div>
         </div>
     </div>
     """, unsafe_allow_html=True)
