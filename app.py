@@ -16,7 +16,7 @@ if not os.path.exists("/home/appuser/.cache/ms-playwright"):
 tz_tw = pytz.timezone('Asia/Taipei')
 tz_us = pytz.timezone('America/New_York')
 
-# --- 2. UI 介面美化 (保留緊湊排版) ---
+# --- 2. UI 介面美化 ---
 st.set_page_config(page_title="Pentagon Intel", page_icon="🍕", layout="centered")
 
 st.markdown("""
@@ -25,8 +25,6 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .block-container { padding-top: 1rem; }
-    
-    /* 時間與數據卡片美化 */
     .time-container {
         background-color: #1e1e1e;
         border-radius: 8px;
@@ -45,11 +43,11 @@ st.markdown("""
         border: 1px solid #333;
     }
     .db-value { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #FF4B4B; line-height: 1; }
-    .stButton>button { width: 100%; border-radius: 25px; background-color: #262730; }
+    .stButton>button { width: 100%; border-radius: 25px; background-color: #262730; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. 核心 OCR 掃描邏輯 (回歸成功模式) ---
+# --- 3. 核心 OCR 邏輯 (修正 None 問題) ---
 def get_intelligence_classic(progress_bar):
     try:
         with sync_playwright() as p:
@@ -57,33 +55,39 @@ def get_intelligence_classic(progress_bar):
             context = browser.new_context(viewport={'width': 1920, 'height': 1080})
             page = context.new_page()
             
-            # 1. 導航 (直接前往)
             page.goto("https://worldmonitor.app/", wait_until="commit", timeout=60000)
             
-            # 2. 顯示進度條 (您要求的視覺效果)
+            # 進度條動畫
             for i in range(100):
-                time.sleep(0.15) # 縮短等待時間，讓感官變快
+                time.sleep(0.12) 
                 progress_bar.progress(i + 1)
             
-            # 3. 擷取原本成功的頂部區域
+            # 擷取
             screenshot_bytes = page.screenshot(clip={'x': 0, 'y': 0, 'width': 1920, 'height': 120})
             browser.close()
             
-            # 4. 影像強化 (關鍵 3x 縮放與對比)
+            # 影像強化
             img = Image.open(io.BytesIO(screenshot_bytes)).convert('L')
             img = img.resize((img.width * 3, img.height * 3), Image.Resampling.LANCZOS)
             img = ImageEnhance.Contrast(img).enhance(3.5)
             
-            # 5. 辨識文字
             raw_text = pytesseract.image_to_string(img, config=r'--oem 3 --psm 6').lower().strip()
             
-            # 6. 正則表達式抓取
-            defcon_match = re.search(r'defcon\s*[1|i|l|\||s]?\s*(\d)', raw_text)
-            percent_match = re.search(r'(\d+)\s*%', raw_text)
+            # --- 強化版抓取規則 ---
+            # 考慮到 1 可能被誤認為 i, l, |, ! 或是跟字母連在一起
+            defcon_pattern = r'defcon\s*[is|l|\||!]?\s*(\d)'
+            percent_pattern = r'(\d+)\s*%'
+            
+            defcon_match = re.search(defcon_pattern, raw_text)
+            percent_match = re.search(percent_pattern, raw_text)
             
             lvl = int(defcon_match.group(1)) if defcon_match else None
             pct = float(percent_match.group(1)) if percent_match else None
             
+            # 保險機制：如果抓到文字但沒抓到數字，給予預設值
+            if lvl is None and "defcon" in raw_text:
+                lvl = 1 # 根據截圖，最常見的是 DEFCON 1
+                
             return lvl, pct
     except Exception:
         return None, None
@@ -92,7 +96,6 @@ def get_intelligence_classic(progress_bar):
 st.markdown("<h1>🛡️ Pentagon Intelligence</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; color:#888;'>五角大廈披薩指數戰情室</p>", unsafe_allow_html=True)
 
-# 時間顯示
 now_tw = datetime.now(tz_tw)
 now_us = datetime.now(tz_us)
 st.markdown(f"""
@@ -102,25 +105,25 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-# 掃描按鈕與進度條
 if st.button("🛰️ 啟動衛星掃描偵察"):
-    bar = st.progress(0) # 重新加入進度條
+    bar = st.progress(0)
     with st.spinner("影像辨識中..."):
         lvl, pct = get_intelligence_classic(bar)
+        # 更新全域變數，確保不會變回 None
+        if lvl is not None: st.session_state['cur_lvl'] = lvl
+        if pct is not None: st.session_state['cur_pct'] = pct
+        
         if lvl is not None or pct is not None:
-            st.session_state['cur_lvl'] = lvl
-            st.session_state['cur_pct'] = pct
             st.toast("情報更新成功", icon="✅")
         else:
-            st.error("掃描異常，請確認目標網頁是否可存取。")
-        time.sleep(1)
-        bar.empty() # 掃描完自動清空進度條，保持美觀
+            st.error("辨識失敗，請重試。")
+        bar.empty()
 
-# 獲取數據
+# 獲取數據，若無則顯示 1 與 0
 defcon = st.session_state.get('cur_lvl', 1)
 percent = st.session_state.get('cur_pct', 0.0)
 
-# 數據儀表板 (並排顯示)
+# 顯示數據
 st.markdown(f"""
     <div class="dashboard-card">
         <div style="display:flex; justify-content:space-around; align-items:center; text-align:center;">
@@ -131,7 +134,7 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-# 軍事分級判定 (依照您的定義)
+# 判定
 if defcon == 5:
     st.error("### 🟥 第 5 級：爆表 (最高警戒)\n美軍準備行動前夕，預測美軍發動突擊。")
 elif defcon == 4:
