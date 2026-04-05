@@ -89,11 +89,11 @@ st.divider()
 
 # 備援手動輸入
 st.sidebar.header("🛠️ 數據修正")
-manual_val = st.sidebar.slider("手動數值備援", 0, 100, 30)
+manual_val = st.sidebar.slider("手動數值備援", 0, 100, 0)
 
 # 執行按鈕
-if st.button("📡 啟動即時影像掃描偵測"):
-    with st.spinner("系統連線中..."):
+if st.button("📡 啟動最新披薩指數偵測"):
+    with st.spinner("系統計算中..."):
         val = get_pizza_index_silent_ocr()
         if val is not None:
             st.session_state['pizza_val'] = val
